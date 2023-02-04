@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: "**"
+    pull_request:
+
+jobs:
+  build:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-12
+            swift: "5.7"
+
+    steps:
+      - uses: swift-actions/setup-swift@v1
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - uses: actions/checkout@v3
+      - run: swift build
+      - run: xcodebuild -scheme CGUtils-Package -sdk iphoneos -destination "platform=iOS Simulator,OS=16.2,name=iPhone 14 Pro"
